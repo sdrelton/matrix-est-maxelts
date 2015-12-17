@@ -60,7 +60,8 @@ function b = mywrapper(flag, x, A)
 
 switch flag
     case 'dim'
-        b = size(A);
+        % Compute size of the implicit matrix (number of rows and columns).
+        b = ...;
     case 'notransp'
         % Compute A*x
         b = ...
