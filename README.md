@@ -38,7 +38,7 @@ p = 5;
 #### Normest inputs and outputs
 The inputs to normestm are:
 * A    - Matrix with real/complex entries or a function handle (see advanced examples below). Can be rectangular.
-* opts - Struct where opts.t is an integer controlling the accuracy and opts.abs determines whether we find max(max(abs(A))) or max(max(A)).
+* opts - Struct where opts.t (opts.alpha for normestm_multi) is an integer controlling the accuracy and opts.abs determines whether we find max(max(abs(A))) or max(max(A)). When opts is an integer, instead of a struct, we assume that opts.abs = true.
 
 In addition normestm_multi has one extra input:
 * p - An integer stating how many of the top-p largest elements are required.
