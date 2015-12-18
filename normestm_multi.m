@@ -1,10 +1,9 @@
 function [nrmest, nrmestrow, nrmestcol, it] = normestm_multi(A, p, opts, varargin)
-% NORMESTM Estimate top-p entries of max(max(abs(A))) using matrix-vector products.
-%
-% The algorithm is a heavily modified version of one proposed by 
-% Boyd (1974) to estimate a mixed subordinate norm,
-% in our case the (1, inf)-norm to estimate max(max(abs(A))),
-% using only matrix-vector products.
+%normestm_multi Estimate largest p entries of A or abs(A).
+% This function estimates the largest p entries of A or abs(A).
+% The estimate is computed using only matrix-vector products with A and A'.
+% The general syntax of a function call is
+%    [nrmest, nrmestrow, nrmestcol, it] = normestm_multi(A, p, opts, varargin)
 %
 % Note: This code relies on the function maxk available at
 % http://uk.mathworks.com/matlabcentral/fileexchange/23576-min-max-selection
@@ -19,18 +18,17 @@ function [nrmest, nrmestrow, nrmestcol, it] = normestm_multi(A, p, opts, varargi
 %                       Please see below for additional requirements on the 
 %                       call A(x, flag).
 %
-% p                   - Integer such that the top-p largest elements are
+% p                   - Integer such that the largest p elements are
 %                       estimated by the algorithm.
 %
-% opts (optional)     - A struct such that opts.alpha is an integer greater 
-%                       than or equal to 1 and opts.abs is boolean. 
-%                       The value opts.alpha controls the accuracy of the 
-%                       algorithm whilst opts.abs = false will return an 
-%                       estimate of max(max(A)) as opposed to 
-%                       max(max(abs(A))). If opts is just an integer then 
-%                       we use this value for alpha and assume 
-%                       that opts.abs = true. Leaving opts empty will
-%                       default to opts = 2;
+% opts (optional)     - A structure with two fields.
+%                       opts.alpha: an integer greater than or equal to 1, 
+%                          which control the number of columns in the matrix 
+%                          iterates.  Larger values generally give more 
+%                          accurate estimates.
+%                        opts.abs: a logical.  If true, max(max(abs(A)))
+%                          is estimated, otherwise max(max(A)).
+%                        The defaults are opts.alpha = 2, opts.abs = true.    
 %
 % varargin (optional) - If A is a function handle then these additional
 %                       arguments will be passed to A.
@@ -38,7 +36,8 @@ function [nrmest, nrmestrow, nrmestcol, it] = normestm_multi(A, p, opts, varargi
 % ------
 % Output
 % ------
-% nrmestm    - The estimates of max(max(abs(A))) or max(max(A)) respectively.
+% nrmestm    - The estimates of max(max(abs(A))) or max(max(A)),
+%              depending on opts.abs.
 % nrmestmrow - The rows of the element attaining this estimate.
 % nrmestmcol - The columns of the element attaining this estimate.
 % it         - The number of iterations performed.
@@ -48,9 +47,9 @@ function [nrmest, nrmestrow, nrmestcol, it] = normestm_multi(A, p, opts, varargi
 % -----
 % When A is a function handle the following flags will be passed to A.
 %
-% 'dim'      - Calling A('dim', []) returns size(A).
-% 'notransp' - Calling A('notransp', x) returns A*x.
-% 'transp'   - Calling A('transp', x) returns A'*x.
+% 'dim'      - Calling A('dim', []) should return size(A).
+% 'notransp' - Calling A('notransp', x) should return A*x.
+% 'transp'   - Calling A('transp', x) should return A'*x.
 %
 % ---------
 % Reference
@@ -65,7 +64,7 @@ function [nrmest, nrmestrow, nrmestcol, it] = normestm_multi(A, p, opts, varargi
 % Authors
 % -------
 % Nicholas J. Higham and Samuel D. Relton
-% 16th December 2015
+% 18th December 2015
 
 %%%%%%%%%%%%%%%%
 % Initialisation
@@ -85,37 +84,35 @@ if nargin < 2
     error('NORMESTM_MUTLI:NotEnoughInputs', 'Need at least 2 inputs.')
 end
 
-try
-    if nargin < 3
-        alpha = 2;
-        useabs = true;
-    elseif isstruct(opts)
-        alpha = opts.alpha;
-        useabs = opts.abs;
-        if useabs == 1
-            useabs = true;
-        end
+% Defaults.
+alpha = 2;
+useabs = true;
+
+if nargin >= 2
+   try
+       if isstruct(opts)
+           if isfield(opts,'alpha')
+              alpha = opts.alpha;
+           end   
+            if isfield(opts,'abs')
+               useabs = logical(opts.abs);
+           end
+       else
+           alpha = opts;
+       end
         validateattributes(alpha, {'numeric'},...
             {'integer', 'positive', 'scalar', 'finite'})
-        validateattributes(useabs, {'logical'}, {'scalar'})
-    else
-        useabs = true;
-        alpha = opts;
-        validateattributes(alpha, {'numeric'},...
-            {'integer', 'positive', 'scalar', 'finite'})
-    end
-catch err
-    error('NORMESTM:InvalidOpts',... 
-        'Argument opts is invalid, please read the help for guidance.')
+   catch err
+       error('NORMESTM:InvalidOpts',... 
+           'Argument opts is invalid, please read the help for guidance.')
+   end
 end
 t = alpha * p;
 
 if ismat
     [m, n] = size(A);
 else
-    dims = A('dim', [], varargin{:});
-    m = dims(1);
-    n = dims(2);
+    [m, n] = A('dim', [], varargin{:});
 end
 
 % Initialise the algorithm
@@ -130,7 +127,7 @@ X(:, 1) = ones(n,1)/n;
 if t >  1
     b = 1 + ((1:n) - 1)/(n-1);
     b(2:2:end) = -b(2:2:end);
-    X(:, 2) = transpose(b)/(3*(n/2));
+    X(:, 2) = transpose(b)/(3*n/2);
 end
 for j = 3:t
     myrand = randi(m);
@@ -229,8 +226,7 @@ for it = 1:maxiter
             break
         end
         ind = setdiff(ind, prev_inds);
-        len = length(ind);
-        if len == 0 && nrmestrow(end) ~= 0
+        if length(ind) == 0 && nrmestrow(end) ~= 0
             break
         end
     end % End of convergence test
@@ -245,10 +241,10 @@ for it = 1:maxiter
 end % End of main loop
 
 %%%%%%%%%%%%%%
-% Subfunctions
+% Nested functions
 %%%%%%%%%%%%%%
 function [M, curindex] = ind2mat(ind, numrows, filter)
-% IND2MAT Turns set of indices into a matrix of unit vectors.
+%ind2mat Turns set of indices into a matrix of unit vectors.
 
 if filter
     % Find unused indices
@@ -281,9 +277,8 @@ end
 end % End of ind2mast
 
 function b = matvec(A, x, ismat, transpose)
-% MATVEC Performs the matrix-vector product A*X where A may be a function.
-%
-% Note: We add deflation of the largest known elements throughout.
+%matvec Performs the matrix-vector product A*X where A may be a function.
+% Deflation of the largest known elements is used.
 if ismat
     % Use standard matrix operations
     if transpose
@@ -314,7 +309,6 @@ if ismat
     end
 else
     % A is a function, use API described in help text.
-    len = size(x, 2);
     if transpose
         b = A('transp', x, varargin{:});
         if nrmestrow(1) ~= 0 && it > 1
