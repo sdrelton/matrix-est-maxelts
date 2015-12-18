@@ -1,11 +1,11 @@
 # normestm
-MATLAB code to estimate the largest element of a matrix using only matrix-vector products.
+MATLAB code to estimate the largest elements of a matrix using only matrix-vector products.
 
 ## Introduction
 The functions in this repository are designed to estimate the quantity (in
 MATLAB notation) max(max(abs(A))), or equivalently norm((A):),inf), where
 the my-by-n matrix A is not known explicitly.  For example we may have A =
-B*C, A = expm(B), or A = inv(B) where forming A explicitly is impractical
+B*C, A = expm(B), or A = inv(B), where forming A explicitly is impractical
 (maybe even impossible if B and C are large and sparse).  However in each
 case forming matrix-vector products with A and its conjugate transpose may
 nevertheless be possible and even relatively inexpensive.
@@ -18,7 +18,7 @@ authored by Bruno Luong. This free software can be downloaded from the
 Exchange](http://uk.mathworks.com/matlabcentral/fileexchange/23576-min-max-selection).
 
 The quantity max(max(abs(A))) can be expressed as the mixed subordinate
-(1,inf)-norm of A.  Underlying our algorithms is an algorithms of Boyd
+(1,inf)-norm of A.  Underlying our algorithms is an algorithm of Boyd
 (1974) and Tao (1975) for estimating mixed subordinate norms.
 Full details of the algorithms, along with thorough numerical experiments
 investigating their performance, can be found in the (open access) paper
@@ -46,13 +46,13 @@ p = 5;
 #### Normest inputs and outputs
 The inputs to normestm are:
 * A    - Matrix with real/complex entries or a function handle (see advanced examples below). Can be rectangular.
-* opts - Struct where opts.t (opts.alpha for normestm_multi) is an integer
+* opts - Structure where opts.t (opts.alpha for normestm_multi) is an integer
        controlling the accuracy and opts.abs is a logical variable that
-       determines whether we find max(max(abs(A))) or max(max(A)). When opts is
-       an integer, instead of a struct, we assume that opts.abs = true.
+       determines whether to seek largest elements of max(max(abs(A))) or max(max(A)). When opts is
+       an integer, instead of a structure, opts.abs is set to true.
 
 In addition normestm_multi has one extra input:
-* p - An integer stating how many of the top-p largest elements are required.
+* p - An integer denoting how many of the largest elements are required.
 
 The outputs of normestm and normestm_multi are:
 * nrmest    - The estimate(s) of the largest p elements.
@@ -86,7 +86,7 @@ switch flag
 end
 ```
 
-A fully functioning wrapper for computing the matrix exponential (using [expmv](http://www.mathworks.com/matlabcentral/fileexchange/29576-matrix-exponential-times-a-vector/content/expmv.m))
+A fully functioning wrapper for computing the matrix exponential (using [expmv](http://www.mathworks.com/matlabcentral/fileexchange/29576-matrix-exponential-times-a-vector))
 is included in the repository as [expmv_wrapper.m.](expmv_wrapper.m)
 We can find the p = 10 largest entries of the matrix exponential as follows 
 (the matrix is taken from the University of Florida Sparse Matrix
