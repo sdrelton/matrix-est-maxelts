@@ -119,9 +119,9 @@ if t >  1
     X(:, 2) = transpose(b)/(3*n/2);
 end
 for j = 3:t
-    myrand = randi(m);
+    myrand = randi(n);
     while ismember(myrand, prev_inds)
-        myrand = randi(m);
+        myrand = randi(n);
     end
     X(myrand, j) = 1;
     prev_inds(end+1) = myrand;
