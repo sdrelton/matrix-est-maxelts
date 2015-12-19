@@ -1,9 +1,9 @@
-# normestm
+# matrix-est-maxelts
 MATLAB code to estimate the largest elements of a matrix using only matrix-vector products.
 
 ## Introduction
-The functions in this repository are designed to estimate the quantity (in
-MATLAB notation) max(max(abs(A))), or equivalently norm((A):),inf), where
+The functions in this repository are designed to estimate the quantity 
+(in MATLAB notation) max(max(abs(A))), or equivalently norm(A(:),inf), where
 the my-by-n matrix A is not known explicitly.  For example we may have A =
 B*C, A = expm(B), or A = inv(B), where forming A explicitly is impractical
 (maybe even impossible if B and C are large and sparse).  However in each
@@ -24,11 +24,12 @@ Full details of the algorithms, along with thorough numerical experiments
 investigating their performance, can be found in the (open access) paper
 (ADD LINK).
 
-To check the code is functioning properly you can run [the
-testcode](normestm_testcode.m) in MATLAB.
+To check the code is functioning properly you can run 
+[the testcode](normestm_testcode.m) in MATLAB.
 
 ## Details
-Our algorithms can be applied to matrices known explicitly, which is usually less efficient than just calling max(max(abs(A))) direclty, or to matrices known only implicitly. Here is an example of each case.
+Our algorithms can be applied to matrices known explicitly, which is usually less efficient than just calling max(max(abs(A))) direclty, or to matrices known only implicitly. Here is an example of the explicit case,
+the implicit case is discussed later.
 
 ```matlab
 A = inv(randn(500));
@@ -43,7 +44,7 @@ opts.abs = true;
 p = 5;
 [nrmests, nrmrows, nrmcols, iters] = normestm_multi(A, p, opts);
 ```
-#### Normest inputs and outputs
+##### Normest inputs and outputs
 The inputs to normestm are:
 * A    - Matrix with real/complex entries or a function handle (see advanced examples below). Can be rectangular.
 * opts - Structure where opts.t (opts.alpha for normestm_multi) is an integer
@@ -60,12 +61,12 @@ The outputs of normestm and normestm_multi are:
 * nrmestcol - The columns where the estimates appear.
 * iter      - The number of iterations required.
 
-#### Using implicitly defined matrices
+##### Using implicitly defined matrices
 The main power of this algorithm is that it can be applied to matrices
 where only matrix-vector products can be computed.  To make use of this
 functionality you will need to write a short wrapper function to perform
-the matrix-vector products in the following form (only the first two
-arguments are required).
+the matrix-vector products in the following form 
+(only the first two arguments are required).
 
 ```matlab
 function b = mywrapper(flag, x, A)
@@ -89,8 +90,7 @@ end
 A fully functioning wrapper for computing the matrix exponential (using [expmv](http://www.mathworks.com/matlabcentral/fileexchange/29576-matrix-exponential-times-a-vector))
 is included in the repository as [expmv_wrapper.m.](expmv_wrapper.m)
 We can find the p = 10 largest entries of the matrix exponential as follows 
-(the matrix is taken from the University of Florida Sparse Matrix
-Collection).
+(the matrix is taken from the University of Florida Sparse Matrix Collection).
 Here we use the function UFget, which can be downloaded from 
 [MATLAB File Exchange](http://www.mathworks.com/matlabcentral/fileexchange/11896-ufget--matlab-interface-to-the-uf-sparse-matrix-collection#comments).
 
