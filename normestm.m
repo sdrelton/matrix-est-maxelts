@@ -101,7 +101,8 @@ end
 if ismat
     [m, n] = size(A);
 else
-    [m, n] = A('dim', [], varargin{:});
+    dims = A('dim', [], varargin{:});
+    m = dims(1); n = dims(2);
 end
 
 % Initialize the algorithm.

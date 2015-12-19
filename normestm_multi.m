@@ -111,8 +111,9 @@ t = alpha * p;
 
 if ismat
     [m, n] = size(A);
-else
-    [m, n] = A('dim', [], varargin{:});
+else 
+    dims = A('dim', [], varargin{:});
+    m = dims(1); n = dims(2);
 end
 
 % Initialise the algorithm
@@ -153,7 +154,6 @@ for it = 1:maxiter
         ind = ind';
         [ind, maxcolnum] = ind2sub(size(Y), ind);
     else
-        % NOT DONE THIS YET
         [ynorms, ind] = maxk(Y(:), t);
         yvals = transpose(Y(ind));
         ynorms = ynorms';
@@ -226,7 +226,7 @@ for it = 1:maxiter
             break
         end
         ind = setdiff(ind, prev_inds);
-        if length(ind) == 0 && nrmestrow(end) ~= 0
+        if isempty(ind) && nrmestrow(end) ~= 0
             break
         end
     end % End of convergence test
@@ -283,7 +283,7 @@ if ismat
     % Use standard matrix operations
     if transpose
         b = A'*x;
-        if nrmestrow(1) ~= 0 && it > 1
+        if it > 1
             for k = 1:length(nrmestrow)
                 if nrmestrow(k) == 0 
                     continue
@@ -295,7 +295,7 @@ if ismat
         end
     else
         b = A*x;
-        if nrmestrow(1) ~= 0 && it > 1
+        if it > 1
             for k = 1:length(nrmestrow)
                 if nrmestrow(k) == 0 
                     continue
@@ -311,7 +311,7 @@ else
     % A is a function, use API described in help text.
     if transpose
         b = A('transp', x, varargin{:});
-        if nrmestrow(1) ~= 0 && it > 1
+        if it > 1
             for k = 1:length(nrmestrow)
                 if nrmestrow(k) == 0 
                     continue
@@ -323,7 +323,7 @@ else
         end
     else
         b = A('notransp', x, varargin{:});
-        if nrmestrow(1) ~= 0 && it > 1
+        if it > 1
             for k = 1:length(nrmestrow)
                 if nrmestrow(k) == 0
                     continue
