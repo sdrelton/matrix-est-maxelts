@@ -5,9 +5,12 @@ function [nrmest, nrmestrow, nrmestcol, it] = normestm_multi(A, p, opts, varargi
 % The general syntax of a function call is
 %    [nrmest, nrmestrow, nrmestcol, it] = normestm_multi(A, p, opts, varargin)
 %
-% Note: This code relies on the function maxk available at
+% Note: This code relies on the function maxk_default.
+% A more optimized version is available at
 % http://uk.mathworks.com/matlabcentral/fileexchange/23576-min-max-selection
 % to find the k largest elements of an array quickly.
+% It is not used directly here due to compilation issues on some platforms.
+% To use maxk, replace all occurences of maxk_default with maxk.
 %
 % -----
 % Input
@@ -148,13 +151,13 @@ for it = 1:maxiter
     clear X
     % Find largest elements of Y
     if useabs
-        [ynorms, ind] = maxk(abs(Y(:)), t);
+        [ynorms, ind] = maxk_default(abs(Y(:)), t);
         yvals = transpose(Y(ind));
         ynorms = ynorms';
         ind = ind';
         [ind, maxcolnum] = ind2sub(size(Y), ind);
     else
-        [ynorms, ind] = maxk(Y(:), t);
+        [ynorms, ind] = maxk_default(Y(:), t);
         yvals = transpose(Y(ind));
         ynorms = ynorms';
         ind = ind';
@@ -165,9 +168,9 @@ for it = 1:maxiter
         % Store best elements from first iteration
         Yp = Y(:, 3:end);
         if useabs
-            [ynormsp, indp] = maxk(abs(Yp(:)), t);
+            [ynormsp, indp] = maxk_default(abs(Yp(:)), t);
         else
-            [ynormsp, indp] = maxk(Yp(:), t);
+            [ynormsp, indp] = maxk_default(Yp(:), t);
         end
         actualvals = transpose(Yp(indp(1:p)));
         ynormsp = ynormsp';
@@ -208,12 +211,12 @@ for it = 1:maxiter
     % Compute Z = A'*dual(Y)
     Z = matvec(A, ind2mat(ind, m, false), ismat, true);
     if useabs
-        [znorms, ind] = maxk(abs(Z(:)), t);
+        [znorms, ind] = maxk_default(abs(Z(:)), t);
         znorms = znorms';
         ind = ind';
         [ind, ~] = ind2sub(size(Z), ind);
     else
-        [znorms, ind] = maxk(Z(:), t);
+        [znorms, ind] = maxk_default(Z(:), t);
         znorms = znorms';
         ind = ind';
         [ind, ~] = ind2sub(size(Z), ind);
