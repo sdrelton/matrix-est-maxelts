@@ -1,7 +1,7 @@
 function  normestm_testcode
 %NORMESTM_TESTCODE  Simple tests of the codes.
 
-% rng(3);
+rng(3);
 disp('Estimate largest entry in absolute value of A = inv(randn(100)):')
 A = inv(randn(100));
 [i,j,mx] = maxelt(abs(A));
@@ -34,21 +34,15 @@ disp(['Position = A(', num2str(nrmestrow), ',', num2str(nrmestcol),')'])
 
 disp(' ')
 disp('We can also find the largest p entries.')
-if ~(exist('maxk','file')==2)
-    disp(['Necessary M-file maxk is not installed, so final test will ' ...
-          'not be run!'])
-   disp('Type help normestm_multi for the link to maxk.')
-else
-   disp('Example with p = 5.')
-   A = inv(randn(100));
-   p = 5;
-   exact = sort(abs(A(:)), 'descend');
-   exact = exact(1:p);
-   [nrmestm, nrmestrow, nrmestcol, it] = normestm_multi(A, p);
-   disp('Compare the two lists:')
-   exact'
-   nrmestm
-end
+disp('Example with p = 5.')
+A = inv(randn(100));
+p = 5;
+exact = sort(abs(A(:)), 'descend');
+exact = exact(1:p)';
+[estimates, nrmestrow, nrmestcol, it] = normestm_multi(A, p);
+disp('Compare the two lists:')
+exact
+estimates
 
 function [i,j,mx] = maxelt(A)
 %MAXELT   Largest element of A and its indices.

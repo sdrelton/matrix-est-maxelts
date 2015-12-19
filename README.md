@@ -4,7 +4,7 @@ MATLAB code to estimate the largest elements of a matrix using only matrix-vecto
 ## Introduction
 The functions in this repository are designed to estimate the quantity
 (in MATLAB notation) max(max(abs(A))), or equivalently norm(A(:),inf), where
-the my-by-n matrix A is not known explicitly.  For example we may have A =
+the m-by-n matrix A is not known explicitly.  For example we may have A =
 B*C, A = expm(B), or A = inv(B), where forming A explicitly is impractical
 (maybe even impossible if B and C are large and sparse).  However in each
 case forming matrix-vector products with A and its conjugate transpose may
@@ -14,11 +14,13 @@ The two codes in this repository, normestm and normestm_multi, are
 designed to find the largest and the largest p elements of A,
 respectively.
 The code normestm_multi depends upon maxk_default.
-A more optimized version of maxk is available,
+A more optimized version of this function is available,
 authored by Bruno Luong.
 This free software can be downloaded from the
-[MATLAB File Exchange](http://uk.mathworks.com/matlabcentral/fileexchange/23576-min-max-selection) but has compilation issues on some platforms.
-To make use of this code, should you be able to compile it,
+[MATLAB File
+Exchange](http://uk.mathworks.com/matlabcentral/fileexchange/23576-min-max-selection)
+but it uses MEX files and can be difficult to install and get working.
+To make use of this code, should you be able to install and run it successfully,
 replace all occurences of maxk_default with maxk in normestm_multi.m
 
 The quantity max(max(abs(A))) can be expressed as the mixed subordinate
@@ -27,14 +29,17 @@ The quantity max(max(abs(A))) can be expressed as the mixed subordinate
 Full details of the algorithms,
 along with thorough numerical experiments
 investigating their performance, can be found in the (open access) paper
-(ADD LINK).
 
-To check the code is functioning properly you can run
+N. J. Higham and S. D. Relton, "[Estimating the Largest Entries of a Matrix](http://eprints.ma.man.ac.uk/2424)", MIMS EPrint
+2015.116, Manchester Institute for Mathematical Sciences, The University of
+Manchester, UK, December 2015.
+
+To check that the code is functioning properly you can run
 [the testcode](normestm_testcode.m) in MATLAB.
 
 ## Details
-Our algorithms can be applied to matrices known explicitly, which is usually less efficient than just calling max(max(abs(A))) direclty, or to matrices known only implicitly. Here is an example of the explicit case,
-the implicit case is discussed later.
+Our algorithms can be applied to matrices known explicitly, which is usually less efficient than just calling max(max(abs(A))) direclty, or to matrices known only implicitly. Here is an example of the explicit case.
+The implicit case is discussed below.
 
 ```matlab
 A = inv(randn(500));
@@ -51,8 +56,8 @@ p = 5;
 ```
 ##### Normest inputs and outputs
 The inputs to normestm are:
-* A    - Matrix with real/complex entries or a function handle (see advanced examples below). Can be rectangular.
-* opts - Structure where opts.t (opts.alpha for normestm_multi) is an integer
+* A:     Matrix with real/complex entries or a function handle (see the advanced examples below). Can be rectangular.
+* opts:  Structure where opts.t (opts.alpha for normestm_multi) is an integer
        controlling the accuracy and opts.abs is a logical variable that
        determines whether to seek largest elements of max(max(abs(A))) or max(max(A)). When opts is
        an integer, instead of a structure, opts.abs is set to true.
@@ -61,20 +66,19 @@ In addition normestm_multi has one extra input:
 * p - An integer denoting how many of the largest elements are required.
 
 The outputs of normestm and normestm_multi are:
-* nrmest    - The estimate(s) of the largest p elements.
-* nrmestrow - The rows where the estimates appear.
-* nrmestcol - The columns where the estimates appear.
-* iter      - The number of iterations required.
+* nrmest:     The estimate(s) of the largest p elements.
+* nrmestrow:  The rows where the estimates appear.
+* nrmestcol:  The columns where the estimates appear.
+* iter:       The number of iterations required.
 
 ##### Using implicitly defined matrices
 The main power of this algorithm is that it can be applied to matrices
 where only matrix-vector products can be computed.  To make use of this
 functionality you will need to write a short wrapper function to perform
-the matrix-vector products in the following form
-(only the first two arguments are required).
+the matrix-vector products in the following form.
 
 ```matlab
-function b = mywrapper(flag, x, A)
+function b = mywrapper(flag, x)
 %mywrapper Computes matrix-vector products for use with normestm and normestm_multi.
 
 switch flag
@@ -107,10 +111,3 @@ A = UFget('SNAP/ca-AstroPh');
 A = A.A;
 [nrmests, nrmows, nrmcols] = normestm_multi(@expmv_wrapper, p, opts, A);
 ```
-
-## Referencing
-To cite this code please use the following.
-
-Nicholas J. Higham and Samuel D. Relton,
-**How to Estimate the Largest Entries of a Matrix.**
-MIMS EPrint..., 2015.
