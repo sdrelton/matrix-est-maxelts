@@ -2,7 +2,7 @@
 MATLAB code to estimate the largest elements of a matrix using only matrix-vector products.
 
 ## Introduction
-The functions in this repository are designed to estimate the quantity 
+The functions in this repository are designed to estimate the quantity
 (in MATLAB notation) max(max(abs(A))), or equivalently norm(A(:),inf), where
 the my-by-n matrix A is not known explicitly.  For example we may have A =
 B*C, A = expm(B), or A = inv(B), where forming A explicitly is impractical
@@ -12,19 +12,24 @@ nevertheless be possible and even relatively inexpensive.
 
 The two codes in this repository, normestm and normestm_multi, are
 designed to find the largest and the largest p elements of A,
-respectively.  The code normestm_multi **has a dependency** on maxk,
-authored by Bruno Luong. This free software can be downloaded from the
-[MATLAB File
-Exchange](http://uk.mathworks.com/matlabcentral/fileexchange/23576-min-max-selection).
+respectively.
+The code normestm_multi depends upon maxk_default.
+A more optimized version of maxk is available,
+authored by Bruno Luong.
+This free software can be downloaded from the
+[MATLAB File Exchange](http://uk.mathworks.com/matlabcentral/fileexchange/23576-min-max-selection) but has compilation issues on some platforms.
+To make use of this code, should you be able to compile it,
+replace all occurences of maxk_default with maxk in normestm_multi.m
 
 The quantity max(max(abs(A))) can be expressed as the mixed subordinate
 (1,inf)-norm of A.  Underlying our algorithms is an algorithm of Boyd
 (1974) and Tao (1975) for estimating mixed subordinate norms.
-Full details of the algorithms, along with thorough numerical experiments
+Full details of the algorithms,
+along with thorough numerical experiments
 investigating their performance, can be found in the (open access) paper
 (ADD LINK).
 
-To check the code is functioning properly you can run 
+To check the code is functioning properly you can run
 [the testcode](normestm_testcode.m) in MATLAB.
 
 ## Details
@@ -65,7 +70,7 @@ The outputs of normestm and normestm_multi are:
 The main power of this algorithm is that it can be applied to matrices
 where only matrix-vector products can be computed.  To make use of this
 functionality you will need to write a short wrapper function to perform
-the matrix-vector products in the following form 
+the matrix-vector products in the following form
 (only the first two arguments are required).
 
 ```matlab
@@ -89,9 +94,9 @@ end
 
 A fully functioning wrapper for computing the matrix exponential (using [expmv](http://www.mathworks.com/matlabcentral/fileexchange/29576-matrix-exponential-times-a-vector))
 is included in the repository as [expmv_wrapper.m.](expmv_wrapper.m)
-We can find the p = 10 largest entries of the matrix exponential as follows 
+We can find the p = 10 largest entries of the matrix exponential as follows
 (the matrix is taken from the University of Florida Sparse Matrix Collection).
-Here we use the function UFget, which can be downloaded from 
+Here we use the function UFget, which can be downloaded from
 [MATLAB File Exchange](http://www.mathworks.com/matlabcentral/fileexchange/11896-ufget--matlab-interface-to-the-uf-sparse-matrix-collection#comments).
 
 ```matlab
