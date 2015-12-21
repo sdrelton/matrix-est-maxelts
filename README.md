@@ -30,7 +30,7 @@ Full details of the algorithms,
 along with thorough numerical experiments
 investigating their performance, can be found in the (open access) paper
 
-N. J. Higham and S. D. Relton, "[Estimating the Largest Entries of a Matrix](http://eprints.ma.man.ac.uk/2424)", MIMS EPrint
+N. J. Higham and S. D. Relton, "[Estimating the Largest Elements of a Matrix](http://eprints.ma.man.ac.uk/2424)", MIMS EPrint
 2015.116, Manchester Institute for Mathematical Sciences, The University of
 Manchester, UK, December 2015.
 
