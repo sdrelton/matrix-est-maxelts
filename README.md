@@ -2,18 +2,25 @@
 MATLAB code to estimate the largest elements of a matrix using only matrix-vector products.
 
 ## Introduction
-The functions in this repository are designed to estimate the quantity
-(in MATLAB notation) max(max(abs(A))), or equivalently norm(A(:),inf), where
-the m-by-n matrix A is not known explicitly.  For example we may have A =
+The functions in this repository are designed to estimate
+the largest elements of A or of abs(A), 
+where the m-by-n matrix A is not known explicitly.  For example we may have A =
 B*C, A = expm(B), or A = inv(B), where forming A explicitly is impractical
 (maybe even impossible if B and C are large and sparse).  However in each
 case forming matrix-vector products with A and its conjugate transpose may
 nevertheless be possible and even relatively inexpensive.
 
-The two codes in this repository, normestm and normestm_multi, are
-designed to find the largest and the largest p elements of A,
-respectively.
-The code normestm_multi depends upon maxk_default.
+The function `normest` estimates 
+(in MATLAB notation)
+- `max(max(abs(A)))` (the default), or
+- `max(max(A))`.
+The quantity `max(max(abs(A)))` can be expressed as the mixed subordinate
+(1,inf)-norm of A.  Underlying our algorithms is an algorithm of Boyd
+(1974) and Tao (1975) for estimating mixed subordinate norms.
+
+The function `normestm_multi` estimates the largest p elements of A, or abs(A),
+where p is an input argument.
+Th function depends upon maxk_default.
 A more optimized version of this function is available,
 authored by Bruno Luong.
 This free software can be downloaded from the
@@ -23,9 +30,6 @@ but it uses MEX files and can be difficult to install and get working.
 To make use of this code, should you be able to install and run it successfully,
 replace all occurences of maxk_default with maxk in normestm_multi.m
 
-The quantity max(max(abs(A))) can be expressed as the mixed subordinate
-(1,inf)-norm of A.  Underlying our algorithms is an algorithm of Boyd
-(1974) and Tao (1975) for estimating mixed subordinate norms.
 Full details of the algorithms,
 along with thorough numerical experiments
 investigating their performance, can be found in the (open access) paper
@@ -65,11 +69,11 @@ The inputs to normestm are:
 In addition normestm_multi has one extra input:
 * p - An integer denoting how many of the largest elements are required.
 
-The outputs of normestm and normestm_multi are:
-* nrmest:     The estimate(s) of the largest p elements.
-* nrmestrow:  The rows where the estimates appear.
-* nrmestcol:  The columns where the estimates appear.
-* iter:       The number of iterations required.
+The outputs of `normestm` and `normestm_multi` are:
+* `nrmest:`     The estimate(s) of the largest p elements.
+* `nrmestrow`:  The rows where the estimates appear.
+* `nrmestcol`:  The columns where the estimates appear.
+* `iter`:       The number of iterations required.
 
 ##### Using implicitly defined matrices
 The main power of this algorithm is that it can be applied to matrices
@@ -97,7 +101,7 @@ end
 ```
 
 A fully functioning wrapper for computing the matrix exponential (using [expmv](http://www.mathworks.com/matlabcentral/fileexchange/29576-matrix-exponential-times-a-vector))
-is included in the repository as [expmv_wrapper.m.](expmv_wrapper.m)
+is included in the repository as [`expmv_wrapper.m`.](expmv_wrapper.m)
 We can find the p = 10 largest entries of the matrix exponential as follows
 (the matrix is taken from the University of Florida Sparse Matrix Collection).
 Here we use the function UFget, which can be downloaded from
