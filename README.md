@@ -3,7 +3,7 @@ MATLAB code to estimate the largest elements of a matrix using only matrix-vecto
 
 ## Introduction
 The functions in this repository are designed to estimate
-the largest elements of A or of abs(A), 
+the largest elements of A or abs(A), 
 where the m-by-n matrix A is not known explicitly.  For example we may have A =
 B*C, A = expm(B), or A = inv(B), where forming A explicitly is impractical
 (maybe even impossible if B and C are large and sparse).  However in each
@@ -14,13 +14,14 @@ The function `normest` estimates
 (in MATLAB notation)
 - `max(max(abs(A)))` (the default), or
 - `max(max(A))`.
+
 The quantity `max(max(abs(A)))` can be expressed as the mixed subordinate
 (1,inf)-norm of A.  Underlying our algorithms is an algorithm of Boyd
 (1974) and Tao (1975) for estimating mixed subordinate norms.
 
-The function `normestm_multi` estimates the largest p elements of A, or abs(A),
+The function `normestm_multi` estimates the largest p elements of A or abs(A),
 where p is an input argument.
-Th function depends upon maxk_default.
+The function depends upon maxk_default.
 A more optimized version of this function is available,
 authored by Bruno Luong.
 This free software can be downloaded from the
@@ -28,7 +29,7 @@ This free software can be downloaded from the
 Exchange](http://uk.mathworks.com/matlabcentral/fileexchange/23576-min-max-selection)
 but it uses MEX files and can be difficult to install and get working.
 To make use of this code, should you be able to install and run it successfully,
-replace all occurences of maxk_default with maxk in normestm_multi.m
+replace all occurrences of maxk_default with maxk in normestm_multi.m
 
 Full details of the algorithms,
 along with thorough numerical experiments
@@ -42,8 +43,10 @@ To check that the code is functioning properly you can run
 [the testcode](normestm_testcode.m) in MATLAB.
 
 ## Details
-Our algorithms can be applied to matrices known explicitly, which is usually less efficient than just calling max(max(abs(A))) direclty, or to matrices known only implicitly. Here is an example of the explicit case.
-The implicit case is discussed below.
+Our algorithms can be applied to matrices known explicitly,
+which is usually less efficient than just calling max(max(abs(A)))
+directly, or to matrices known only implicitly. Here is an example of the
+explicit case.  The implicit case is discussed below.
 
 ```matlab
 A = inv(randn(500));
@@ -59,15 +62,15 @@ p = 5;
 [nrmests, nrmrows, nrmcols, iters] = normestm_multi(A, p, opts);
 ```
 ##### Normest inputs and outputs
-The inputs to normestm are:
-* A:     Matrix with real/complex entries or a function handle (see the advanced examples below). Can be rectangular.
-* opts:  Structure where opts.t (opts.alpha for normestm_multi) is an integer
+The inputs to `normestm` are:
+* `A`:     Matrix with real/complex entries or a function handle (see the advanced examples below). Can be rectangular.
+* `opts`:  Structure where opts.t (opts.alpha for normestm_multi) is an integer
        controlling the accuracy and opts.abs is a logical variable that
        determines whether to seek largest elements of max(max(abs(A))) or max(max(A)). When opts is
        an integer, instead of a structure, opts.abs is set to true.
 
-In addition normestm_multi has one extra input:
-* p - An integer denoting how many of the largest elements are required.
+In addition `normestm_multi` has one extra input:
+* `p` - An integer denoting how many of the largest elements are required.
 
 The outputs of `normestm` and `normestm_multi` are:
 * `nrmest:`     The estimate(s) of the largest p elements.
