@@ -35,9 +35,7 @@ Full details of the algorithms,
 along with thorough numerical experiments
 investigating their performance, can be found in the (open access) paper
 
-N. J. Higham and S. D. Relton, "[Estimating the Largest Elements of a Matrix](http://eprints.ma.man.ac.uk/2424)", MIMS EPrint
-2015.116, Manchester Institute for Mathematical Sciences, The University of
-Manchester, UK, December 2015.
+N. J. Higham and S. D. Relton, "[Estimating the Largest Elements of a Matrix](http://dx.doi.org/10.1137/0729014)", SIAM J. Sci. Comput., 38(5), C584--C601, 2016.
 
 To check that the code is functioning properly you can run
 [the testcode](normestm_testcode.m) in MATLAB.
