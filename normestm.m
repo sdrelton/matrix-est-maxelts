@@ -48,10 +48,10 @@ function [nrmest, nrmestrow, nrmestcol, it] = normestm(A, opts, varargin)
 % ---------
 % Reference
 % ---------
-% Nicholas J. Higham and Samuel D. Relton,
+% N. J. Higham and S. D. Relton, 
 % Estimating the Largest Elements of a Matrix,
-% MIMS EPrint 2015.116, Manchester Institute for Mathematical Sciences,
-% The University of Manchester, UK, December 2015.
+% SIAM J. Sci. Comput., 38(5), C584--C601, 2016.
+% http://dx.doi.org/10.1137/0729014
 %
 % Corresponding algorithm from the paper: Algorithm 4.1
 %
